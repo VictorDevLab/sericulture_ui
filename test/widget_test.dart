@@ -5,26 +5,51 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:sericulture_ui/main.dart';
+import 'package:sericulture_ui/app/app.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('app opens on dashboard with mobile navigation', (tester) async {
+    await tester.pumpWidget(const SericultureApp());
+    await tester.pumpAndSettle();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Sericulture'), findsOneWidget);
+    expect(find.text('Your rearing workspace'), findsOneWidget);
+    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Batches'), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+  testWidgets('care navigation opens a placeholder feature', (tester) async {
+    await tester.pumpWidget(const SericultureApp());
+    await tester.pumpAndSettle();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await tester.tap(find.text('Care'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Feeding logs').first);
+    await tester.pumpAndSettle();
+
+    expect(
+      find.textContaining('No sample records or backend actions are included.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('batch create screen is reachable without fake saving', (
+    tester,
+  ) async {
+    await tester.pumpWidget(const SericultureApp());
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Batches').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create a batch'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Create batch'), findsOneWidget);
+    expect(
+      find.text('Saving is not enabled until local storage is implemented.'),
+      findsOneWidget,
+    );
   });
 }
