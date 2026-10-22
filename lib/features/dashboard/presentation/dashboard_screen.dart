@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/app_card.dart';
-import '../../../core/widgets/app_states.dart';
-import '../../shared/presentation/feature_link.dart';
+import '../data/dashboard_sample_data.dart';
+import 'dashboard_sections.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final overview = DashboardSampleData.overview;
     final theme = Theme.of(context);
     return Scaffold(
       body: SafeArea(
@@ -23,122 +22,59 @@ class DashboardScreen extends StatelessWidget {
                 SliverPadding(
                   padding: const EdgeInsets.fromLTRB(
                     AppSpacing.page,
-                    AppSpacing.lg,
+                    AppSpacing.md,
                     AppSpacing.page,
                     AppSpacing.xl,
                   ),
                   sliver: SliverList.list(
                     children: [
-                      Row(
-                        children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: AppColors.forest,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: const Icon(
-                              Icons.eco_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Text(
-                            'Sericulture',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const Spacer(),
-                          IconButton(
-                            tooltip: 'Settings',
-                            onPressed: () => context.go('/more/settings'),
-                            icon: const Icon(Icons.settings_outlined),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-                      Text(
-                        'Good husbandry,\none healthy batch at a time.',
-                        style: theme.textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          height: 1.14,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        'A clear workspace for managing Eri and Bombyx mori rearing.',
-                        style: theme.textTheme.bodyLarge?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                      _DashboardHeader(
+                        onNotifications: () => _showNotImplemented(
+                          context,
+                          'Notifications are not available yet.',
                         ),
                       ),
                       const SizedBox(height: AppSpacing.lg),
-                      AppCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.inventory_2_outlined,
-                                  color: theme.colorScheme.primary,
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                Text(
-                                  'Your rearing workspace',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const AppEmptyState(
-                              title: 'A fresh start',
-                              message:
-                                  'Create a batch when you are ready. Records will be connected to local storage in the next implementation phase.',
-                              icon: Icons.spa_outlined,
-                            ),
-                            FilledButton.icon(
-                              onPressed: () => context.go('/batches/create'),
-                              icon: const Icon(Icons.add_rounded),
-                              label: const Text('Prepare a batch'),
-                            ),
-                          ],
+                      Text(
+                        'Farm overview',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.xl),
+                      const SizedBox(height: AppSpacing.xxs),
                       Text(
-                        'REARING TOOLS',
-                        style: theme.textTheme.labelLarge?.copyWith(
+                        'A sample overview for Eri and Bombyx mori rearing.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
-                          letterSpacing: 1.1,
-                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      FeatureLinkList(
-                        items: const [
-                          FeatureLink(
-                            title: 'Feeding logs',
-                            description: 'Record feedings and observations',
-                            path: '/care/feeding',
-                            icon: Icons.grass_rounded,
-                          ),
-                          FeatureLink(
-                            title: 'Environment',
-                            description: 'Monitor rearing conditions',
-                            path: '/care/environment',
-                            icon: Icons.thermostat_rounded,
-                          ),
-                          FeatureLink(
-                            title: 'Lifecycle calendar',
-                            description: 'Plan stages and key dates',
-                            path: '/care/lifecycle',
-                            icon: Icons.calendar_month_rounded,
-                          ),
-                        ],
+                      _SampleDataNotice(),
+                      const SizedBox(height: AppSpacing.lg),
+                      const DashboardSectionTitle(title: 'Key metrics'),
+                      DashboardMetrics(metrics: overview.metrics),
+                      const SizedBox(height: AppSpacing.lg),
+                      const DashboardSectionTitle(title: "Today's tasks"),
+                      DashboardTaskList(tasks: overview.tasks),
+                      const SizedBox(height: AppSpacing.lg),
+                      const DashboardSectionTitle(title: 'Alerts'),
+                      DashboardAlertList(alerts: overview.alerts),
+                      const SizedBox(height: AppSpacing.lg),
+                      DashboardSectionTitle(
+                        title: 'Active batches',
+                        actionLabel: 'View all',
+                        onAction: () => context.go('/batches'),
                       ),
+                      DashboardBatchList(batches: overview.activeBatches),
+                      const SizedBox(height: AppSpacing.md),
+                      const DashboardSectionTitle(title: 'Quick actions'),
+                      DashboardQuickActions(
+                        onMortality: () => _showNotImplemented(
+                          context,
+                          'Mortality logging is not implemented. No record was saved.',
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
                     ],
                   ),
                 ),
@@ -149,4 +85,105 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _DashboardHeader extends StatelessWidget {
+  const _DashboardHeader({required this.onNotifications});
+
+  final VoidCallback onNotifications;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Good morning', style: theme.textTheme.bodyLarge),
+              Text(
+                'Your rearing workspace',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Semantics(
+          label: 'Notifications, not available yet',
+          button: true,
+          child: IconButton(
+            tooltip: 'Notifications (not available yet)',
+            onPressed: onNotifications,
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(Icons.notifications_none_rounded),
+                Positioned(
+                  right: -1,
+                  top: -1,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.error,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: theme.colorScheme.surface,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: const SizedBox(width: 9, height: 9),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SampleDataNotice extends StatelessWidget {
+  const _SampleDataNotice();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(AppSpacing.controlRadius),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.info_outline_rounded,
+            size: 18,
+            color: theme.colorScheme.onSecondaryContainer,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(
+              'Illustrative sample values only · no farm records or sensors connected.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSecondaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+void _showNotImplemented(BuildContext context, String message) {
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(SnackBar(content: Text(message)));
 }

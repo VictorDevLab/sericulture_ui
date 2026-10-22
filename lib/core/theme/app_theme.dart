@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 import 'app_spacing.dart';
@@ -24,11 +25,9 @@ abstract final class AppTheme {
       scaffoldBackgroundColor: isDark
           ? const Color(0xFF101813)
           : AppColors.cream,
-      textTheme: Typography.material2021().black.apply(
-        bodyColor: textColor,
-        displayColor: textColor,
-        fontFamily: 'Roboto',
-      ),
+      textTheme: GoogleFonts.rubikTextTheme(
+        Typography.material2021().black,
+      ).apply(bodyColor: textColor, displayColor: textColor),
       appBarTheme: AppBarTheme(
         backgroundColor: isDark ? const Color(0xFF101813) : AppColors.cream,
         foregroundColor: textColor,
@@ -39,6 +38,7 @@ abstract final class AppTheme {
           color: textColor,
           fontSize: 20,
           fontWeight: FontWeight.w700,
+          fontFamily: GoogleFonts.rubik().fontFamily,
         ),
       ),
       cardTheme: CardThemeData(
