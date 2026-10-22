@@ -80,7 +80,7 @@ void main() {
     );
   });
 
-  testWidgets('batch create screen is reachable without fake saving', (
+  testWidgets('batch create screen explains its in-memory-only behavior', (
     tester,
   ) async {
     await tester.pumpWidget(const SericultureApp());
@@ -93,7 +93,7 @@ void main() {
 
     expect(find.text('Create batch'), findsOneWidget);
     expect(
-      find.text('Saving is not enabled until local storage is implemented.'),
+      find.textContaining('stored in memory for the current app session only'),
       findsOneWidget,
     );
   });
